@@ -15,8 +15,8 @@ const BookCard: React.FC<{ book: Book }> = ({ book }) => {
 
     return (
         <Card>
-            <Grid container>
-                <Grid item xs={12} sm={4}>
+            <Grid container spacing={2}>
+                <Grid item xs={12} sm={6} md={4} lg={3}>
                     <CardMedia
                         component="img"
                         image={imageSrc}
