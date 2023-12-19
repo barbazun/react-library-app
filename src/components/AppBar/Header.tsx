@@ -1,6 +1,7 @@
 import React from 'react';
-import { AppBar, Toolbar, Typography, InputBase, Box } from '@mui/material';
+import { AppBar, Toolbar, Typography, InputBase, Box, Button } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
+import { Link } from 'react-router-dom';
 
 const Header: React.FC = () => {
     return (
@@ -17,6 +18,9 @@ const Header: React.FC = () => {
                         sx={{ ml: 1 }}
                     />
                 </Box>
+                <Button color="inherit" component={Link} to="/books/add">
+                    Додати книгу
+                </Button>
             </Toolbar>
         </AppBar>
     );

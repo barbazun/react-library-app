@@ -5,12 +5,14 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import App from './App';
 import BookDetails from './components/BookDetails/BookDetails';
 import reportWebVitals from "./reportWebVitals";
+import AddBookForm from "./components/AddBookForm/AddBookForm";
 
 ReactDOM.render(
     <Router>
         <Routes>
             <Route path="/" element={<App />} />
             <Route path="/books/:id" element={<BookDetails />} />
+            <Route path="/books/add" element={<AddBookForm />} />
         </Routes>
     </Router>,
     document.getElementById('root')
