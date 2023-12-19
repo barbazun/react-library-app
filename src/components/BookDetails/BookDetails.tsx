@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import {Link, useParams} from 'react-router-dom';
 import { fetchBookById } from '../../services/bookService';
 import { Book } from "../../types/Book";
 import defaultImage from '../../images/book_cover_mockup/mock.jpg'
-import { Card, CardContent, Typography, CircularProgress, Box, Rating, CardMedia } from '@mui/material';
+import {Card, CardContent, Typography, CircularProgress, Box, Rating, CardMedia, Grid, Button} from '@mui/material';
 
 const BookDetails: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -71,6 +71,11 @@ const BookDetails: React.FC = () => {
                     <Rating name="read-only" value={book.rating} readOnly />
                 </Box>
             </CardContent>
+            <Grid>
+                <Button variant = "outlined" component={Link} to="/">
+                    На головну
+                </Button>
+            </Grid>
         </Card>
     );
 };
