@@ -6,6 +6,7 @@ import App from './App';
 import BookDetails from './components/BookDetails/BookDetails';
 import reportWebVitals from "./reportWebVitals";
 import AddBookForm from "./components/AddBookForm/AddBookForm";
+import EditBookForm from "./components/EditBookForm/EditBookForm";
 
 ReactDOM.render(
     <Router>
@@ -13,6 +14,7 @@ ReactDOM.render(
             <Route path="/" element={<App />} />
             <Route path="/books/:id" element={<BookDetails />} />
             <Route path="/books/add" element={<AddBookForm />} />
+            <Route path="/edit-book/:bookId" element={<EditBookForm />} />
         </Routes>
     </Router>,
     document.getElementById('root')

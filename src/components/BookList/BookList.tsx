@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { fetchAllBooks } from '../../services/bookService';
 import axios from 'axios';
-import BookCard from '../BookCard/BookCard';
-import PaginationComponent from '../Pagination/PaginationComponent';
 import { Grid, IconButton, Dialog, DialogActions, DialogTitle, Button } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import BookCard from '../BookCard/BookCard';
+import PaginationComponent from '../Pagination/PaginationComponent';
 import { Book } from "../../types/Book";
+import { useNavigate } from 'react-router-dom';
+import {fetchAllBooks} from "../../services/bookService";
 
 const BooksList: React.FC = () => {
     const [books, setBooks] = useState<Book[]>([]);
@@ -13,13 +15,18 @@ const BooksList: React.FC = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [openDialog, setOpenDialog] = useState(false);
     const [selectedBookId, setSelectedBookId] = useState<number | null>(null);
-    const deleteBookUrl = 'http://localhost:10055/api/v1/books/'
+    const navigate = useNavigate();
+    const deleteBookUrl = 'http://localhost:10055/api/v1/books/';
 
     useEffect(() => {
         const loadBooks = async () => {
-            const data = await fetchAllBooks(currentPage);
-            setBooks(data.content);
-            setTotalPages(data.totalPages);
+            try {
+                const response = await fetchAllBooks();
+                setBooks(response.content);
+                setTotalPages(response.totalPages);
+            } catch (error) {
+                console.error('Сталася невідома помилка:', error);
+            }
         };
 
         loadBooks();
@@ -42,17 +49,20 @@ const BooksList: React.FC = () => {
         if (selectedBookId !== null) {
             try {
                 await axios.delete(`${deleteBookUrl}${selectedBookId}`);
-                const data = await fetchAllBooks(currentPage);
-                setBooks(data.content);
-                setTotalPages(data.totalPages);
+                const updatedBooks = books.filter(book => book.id !== selectedBookId);
+                setBooks(updatedBooks);
             } catch (error) {
-                console.error('Помилка при видаленні книги:', error);
+                console.error('Не вдалося видалити книгу:', error);
             }
 
             setOpenDialog(false);
             setSelectedBookId(null);
         }
     };
+
+    const handleEditBook = (bookId: number) => {
+        navigate(`/edit-book/${bookId}`);
+    }
 
     return (
         <div>
@@ -62,6 +72,9 @@ const BooksList: React.FC = () => {
                         <BookCard book={book} />
                         <IconButton onClick={() => handleOpenDeleteDialog(book.id)}>
                             <DeleteIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleEditBook(book.id)}>
+                            <EditIcon />
                         </IconButton>
                     </Grid>
                 ))}
