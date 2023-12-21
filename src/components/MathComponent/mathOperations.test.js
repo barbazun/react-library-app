@@ -109,6 +109,17 @@ describe('mathOperations', () => {
         expect(quotient).toBe(expectedQuotient);
     });
 
+    it('should throw an error on division by 0', () => {
+        // Arrange
+        const a = 1;
+        const b = 0;
+
+        // Act & Assert
+        expect(() => {
+            math.divide(a, b);
+        }).toThrow("Division by zero is not allowed.");
+    });
+
 
     it('should return the correct result for modulus', () => {
         // Arrange
