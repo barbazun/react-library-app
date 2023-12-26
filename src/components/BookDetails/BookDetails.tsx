@@ -1,36 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import {Link, useParams} from 'react-router-dom';
-import { fetchBookById } from '../../services/bookService';
-import { Book } from "../../types/Book";
-import defaultImage from '../../images/book_cover_mockup/mock.jpg'
-import {Card, CardContent, Typography, CircularProgress, Box, Rating, CardMedia, Grid, Button} from '@mui/material';
+import React, {useEffect, useState} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams, Link } from 'react-router-dom';
+import { fetchBookDetails } from '../../features/bookSlice';
+import { CircularProgress, Box, Typography, Card, CardContent, CardMedia, Grid, Button, Rating } from '@mui/material';
+import defaultImage from '../../images/book_cover_mockup/mock.jpg';
+import {RootState} from "../../app/store";
 
 const BookDetails: React.FC = () => {
-    const { id } = useParams<{ id: string }>();
-    const [book, setBook] = useState<Book | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [imageSrc, setImageSrc] = useState('');
+    const { id } = useParams<{ id?: string }>();
+    const dispatch = useDispatch();
+    const { currentBook, isLoading, error } = useSelector((state: RootState) => state.book);
+    const [imageSrc, setImageSrc] = useState(defaultImage);
 
     useEffect(() => {
-        const loadBook = async () => {
-            if (id !== undefined) {
-                try {
-                    const bookId = parseInt(id, 10);
-                    if (!isNaN(bookId)) {
-                        const fetchedBook = await fetchBookById(bookId);
-                        setBook(fetchedBook);
-                        setImageSrc(fetchedBook.cover || defaultImage);
-                        setIsLoading(false);
-                    }
-                } catch (error) {
-                    console.error('Сталася невідома помилка:', error);
-                    setIsLoading(false);
-                }
+        if (id) {
+            const bookId = parseInt(id, 10);
+            if (!isNaN(bookId)) {
+                // @ts-ignore
+                dispatch(fetchBookDetails(bookId));
+            } else {
+                console.error('Invalid book ID');
             }
-        };
+        }
+    }, [dispatch, id]);
 
-        loadBook();
-    }, [id]);
+    useEffect(() => {
+        if (currentBook && currentBook.cover) {
+            setImageSrc(currentBook.cover);
+        }
+    }, [currentBook]);
 
     if (isLoading) {
         return (
@@ -40,11 +38,11 @@ const BookDetails: React.FC = () => {
         );
     }
 
-    if (!book) return <Typography>Книга не знайдена.</Typography>;
+    if (error) {
+        return <Typography color="error">Сталася невідома помилка: {error}</Typography>;
+    }
 
-    const handleImageError = () => {
-        setImageSrc(defaultImage);
-    };
+    if (!currentBook) return <Typography>Книга не знайдена.</Typography>;
 
     return (
         <Card>
@@ -52,8 +50,8 @@ const BookDetails: React.FC = () => {
                 component="img"
                 height="300"
                 image={imageSrc}
-                alt={book.title}
-                onError={handleImageError}
+                alt={currentBook.title}
+                onError={() => setImageSrc(defaultImage)}
                 sx={{
                     width: 'auto',
                     objectFit: 'cover',
@@ -62,17 +60,17 @@ const BookDetails: React.FC = () => {
                 }}
             />
             <CardContent>
-                <Typography variant="h5">{book.title}</Typography>
-                <Typography color="textSecondary">Автор: {book.author}</Typography>
-                <Typography color="textSecondary">Жанри: {book.genres}</Typography>
-                <Typography color="textSecondary">Опис: {book.description}</Typography>
+                <Typography variant="h5">{currentBook.title}</Typography>
+                <Typography color="textSecondary">Автор: {currentBook.author}</Typography>
+                <Typography color="textSecondary">Жанри: {currentBook.genres}</Typography>
+                <Typography color="textSecondary">Опис: {currentBook.description}</Typography>
                 <Box>
                     <Typography component="legend">Рейтинг:</Typography>
-                    <Rating name="read-only" value={book.rating} readOnly />
+                    <Rating name="read-only" value={currentBook.rating} readOnly />
                 </Box>
             </CardContent>
-            <Grid>
-                <Button variant = "outlined" component={Link} to="/">
+            <Grid container justifyContent="center">
+                <Button variant="outlined" component={Link} to="/">
                     На головну
                 </Button>
             </Grid>
