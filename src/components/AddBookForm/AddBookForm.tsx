@@ -3,8 +3,9 @@ import axios from 'axios';
 import { Grid, TextField, Button, Select, MenuItem, InputLabel, FormControl, CircularProgress, OutlinedInput, Chip } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import {Link} from "react-router-dom";
+import {addNewBook} from "../../services/bookService"
 
-interface BookData {
+export interface BookData {
     title: string;
     author: string;
     genres: string[];
@@ -25,7 +26,6 @@ const AddBookForm: React.FC = () => {
     const [availableGenres, setAvailableGenres] = useState([]);
     const [submitting, setSubmitting] = useState(false);
     const genresUrl = 'http://localhost:10055/api/v1/books/genres';
-    const addBookUrl = 'http://localhost:10055/api/v1/books';
 
     useEffect(() => {
         axios.get(genresUrl)
@@ -52,7 +52,7 @@ const AddBookForm: React.FC = () => {
             genres: bookData.genres.join(',')
         };
 
-        axios.post(addBookUrl, submitData)
+        addNewBook(submitData)
             .then(() => {
                 alert('Книга була успішно додана!');
                 setBookData({

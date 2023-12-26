@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { TextField, Button, FormControl, Select, MenuItem, InputLabel, OutlinedInput, Chip, Box } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import axios from 'axios';
+import {updateBook} from "../../services/bookService";
 
 const EditBookForm = () => {
     interface BookData {
@@ -51,10 +52,10 @@ const EditBookForm = () => {
             return;
         }
 
-        axios.put(`http://localhost:10055/api/v1/books/${bookId}`, {
+        updateBook({
             ...bookData,
             genres: bookData.genres.join(',')
-        })
+        }, bookId)
             .then(() => {
                 navigate('/');
             })
